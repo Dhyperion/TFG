@@ -1,3 +1,4 @@
 Keras
 flask
 numpy
+PIL
