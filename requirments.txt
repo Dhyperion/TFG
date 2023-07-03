@@ -1,4 +1,4 @@
 Keras
 flask
 numpy
-PIL
+Pillow
