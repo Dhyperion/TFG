@@ -2,3 +2,4 @@ Keras
 flask
 numpy
 Pillow
+tensorflow-cpu --no-cache-dir
