@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Aplicación web para la deteccion de melanomas</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+<body>
+    <h1>Aplicación web para la deteccion de melanomas</h1>
+
+    <div id="input-container">
+        <input type="file" id="input-image" name="input-image" accept="image/*">
+        <div id="input-preview"></div>
+        <button type="submit" id="submit-button">Predecir</button>
+    </div>
+
+    <div id="prediction-result">
+        <h3>Predicciones:</h3>
+        <p>akiec: <span id="prediction-akiec"></span></p>
+        <p>bcc: <span id="prediction-bcc"></span></p>
+        <p>bkl: <span id="prediction-bkl"></span></p>
+        <p>df: <span id="prediction-df"></span></p>
+        <p>mel: <span id="prediction-mel"></span></p>
+        <p>nv: <span id="prediction-nv"></span></p>
+        <p>vasc: <span id="prediction-vasc"></span></p>
+    </div>
+
+    <script>
+        // Manejar la carga de la imagen
+        $('#input-image').change(function(event) {
+            var input = event.target;
+            var reader = new FileReader();
+
+            reader.onload = function() {
+                var dataURL = reader.result;
+                var inputPreview = $('#input-preview');
+                inputPreview.empty();
+                inputPreview.append('<img src="' + dataURL + '" alt="Input Image" width="100%">');
+            }
+
+            reader.readAsDataURL(input.files[0]);
+        });
+
+        // Manejar la solicitud de predicción al hacer clic en el botón
+        $('#submit-button').click(function(event) {
+            event.preventDefault();
+
+            // Obtener la imagen cargada
+            var image = $('#input-image')[0].files[0];
+
+            if (image) {
+                // Crear un objeto FormData para enviar la imagen
+                var formData = new FormData();
+                formData.append('input-image', image);
+
+                // Realizar la solicitud POST al backend
+                $.ajax({
+                    url: '/predict',
+                    type: 'POST',
+                    processData: false,
+                    contentType: false,
+                    data: formData,
+                    success: function(response) {
+                        // Manejar la respuesta del servidor
+                        var prediction = response.prediction;
+
+                        // Mostrar las predicciones en la página
+                        $('#prediction-akiec').text(prediction.akiec);
+                        $('#prediction-bcc').text(prediction.bcc);
+                        $('#prediction-bkl').text(prediction.bkl);
+                        $('#prediction-df').text(prediction.df);
+                        $('#prediction-mel').text(prediction.mel);
+                        $('#prediction-nv').text(prediction.nv);
+                        $('#prediction-vasc').text(prediction.vasc);
+
+                        // Mostrar el contenedor de resultados
+                        $('#prediction-result').css('display', 'flex');
+                    },
+                    error: function(error) {
+                        console.log('Error:', error);
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
