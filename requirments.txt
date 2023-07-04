@@ -2,4 +2,4 @@ Keras
 flask
 numpy
 Pillow
-tensorflow
+tensorflow-cpu
